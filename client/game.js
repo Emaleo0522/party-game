@@ -1,7 +1,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-const socket = io("https://TU_BACKEND_URL"); // <- Cambiar luego
+const socket = io("https://outstanding-eran-1nosequeponer2-f2fdb7e9.koyeb.app"); // <- Cambiar luego
 
 let players = {};
 let myId = null;
