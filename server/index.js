@@ -11,6 +11,13 @@ const PORT = process.env.PORT || 3000;
 let players = {};
 const emojis = ["😺", "🐶", "🐸", "🐵", "👻", "🤖", "🍕", "💩", "😎", "🐷"];
 
+// Objetos locos en el mapa
+const mapObjects = [
+  { x: 200, y: 150, emoji: "🍌" },
+  { x: 400, y: 300, emoji: "💣" },
+  { x: 600, y: 100, emoji: "⚽" }
+];
+
 io.on("connection", socket => {
   console.log(`Jugador conectado: ${socket.id}`);
 
@@ -25,7 +32,7 @@ io.on("connection", socket => {
   };
 
   socket.emit("init", socket.id);
-  io.emit("state", players);
+  io.emit("state", { players, mapObjects });
 
   socket.on("move", keys => {
     const p = players[socket.id];
@@ -37,13 +44,13 @@ io.on("connection", socket => {
     if (keys.ArrowLeft || keys.a) p.x -= speed;
     if (keys.ArrowRight || keys.d) p.x += speed;
 
-    io.emit("state", players);
+    io.emit("state", { players, mapObjects });
   });
 
   socket.on("disconnect", () => {
     console.log(`Jugador desconectado: ${socket.id}`);
     delete players[socket.id];
-    io.emit("state", players);
+    io.emit("state", { players, mapObjects });
   });
 });
 
