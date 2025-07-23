@@ -11,8 +11,14 @@ const PORT = process.env.PORT || 3000;
 let players = {};
 
 io.on("connection", socket => {
-  console.log(`Player connected: ${socket.id}`);
-  players[socket.id] = { x: 100 + Math.random() * 600, y: 100 + Math.random() * 400 };
+  console.log(`Jugador conectado: ${socket.id}`);
+
+  const randomName = "Jugador-" + Math.floor(Math.random() * 1000);
+  players[socket.id] = {
+    x: 100 + Math.random() * 600,
+    y: 100 + Math.random() * 400,
+    name: randomName
+  };
 
   socket.emit("init", socket.id);
   io.emit("state", players);
@@ -31,13 +37,13 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    console.log(`Player disconnected: ${socket.id}`);
+    console.log(`Jugador desconectado: ${socket.id}`);
     delete players[socket.id];
     io.emit("state", players);
   });
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Servidor activo en puerto ${PORT}`);
 });
 
