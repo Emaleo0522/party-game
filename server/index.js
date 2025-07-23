@@ -9,15 +9,19 @@ const io = new Server(server, { cors: { origin: "*" } });
 const PORT = process.env.PORT || 3000;
 
 let players = {};
+const emojis = ["😺", "🐶", "🐸", "🐵", "👻", "🤖", "🍕", "💩", "😎", "🐷"];
 
 io.on("connection", socket => {
   console.log(`Jugador conectado: ${socket.id}`);
 
   const randomName = "Jugador-" + Math.floor(Math.random() * 1000);
+  const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
   players[socket.id] = {
     x: 100 + Math.random() * 600,
     y: 100 + Math.random() * 400,
-    name: randomName
+    name: randomName,
+    emoji: randomEmoji
   };
 
   socket.emit("init", socket.id);

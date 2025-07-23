@@ -29,10 +29,14 @@ function drawPlayers() {
     ctx.fillStyle = id === myId ? "lime" : "orange";
     ctx.fillRect(p.x, p.y, 40, 40);
 
+    // Emoji encima del cuadrado
+    ctx.font = "24px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(p.emoji || "❓", p.x + 20, p.y - 30);
+
     // Nombre flotante
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";
-    ctx.textAlign = "center";
     ctx.fillText(p.name || "?", p.x + 20, p.y - 10);
   }
 }
