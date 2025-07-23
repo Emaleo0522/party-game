@@ -11,12 +11,20 @@ const PORT = process.env.PORT || 3000;
 let players = {};
 const emojis = ["😺", "🐶", "🐸", "🐵", "👻", "🤖", "🍕", "💩", "😎", "🐷"];
 
-// Objetos locos en el mapa
+// Objetos del mapa
 const mapObjects = [
-  { x: 200, y: 150, emoji: "🍌" },
-  { x: 400, y: 300, emoji: "💣" },
-  { x: 600, y: 100, emoji: "⚽" }
+  { x: 200, y: 150, emoji: "🍌", effect: "slip" },
+  { x: 400, y: 300, emoji: "💣", effect: "explode" },
+  { x: 600, y: 100, emoji: "⚽", effect: "bounce" }
 ];
+
+// Función simple de colisión entre jugador y objeto
+function checkCollision(p, obj) {
+  const dx = p.x + 20 - obj.x;
+  const dy = p.y + 20 - obj.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  return distance < 40;
+}
 
 io.on("connection", socket => {
   console.log(`Jugador conectado: ${socket.id}`);
@@ -44,17 +52,20 @@ io.on("connection", socket => {
     if (keys.ArrowLeft || keys.a) p.x -= speed;
     if (keys.ArrowRight || keys.d) p.x += speed;
 
-    io.emit("state", { players, mapObjects });
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`Jugador desconectado: ${socket.id}`);
-    delete players[socket.id];
-    io.emit("state", { players, mapObjects });
-  });
-});
-
-server.listen(PORT, () => {
-  console.log(`Servidor activo en puerto ${PORT}`);
-});
+    // Aplicar efectos si colisiona con algún objeto
+    for (const obj of mapObjects) {
+      if (checkCollision(p, obj)) {
+        if (obj.effect === "slip") {
+          p.x += (Math.random() - 0.5) * 40;
+          p.y += (Math.random() - 0.5) * 40;
+        }
+        if (obj.effect === "bounce") {
+          p.x -= (keys.ArrowRight || keys.d) ? 40 : 0;
+          p.x += (keys.ArrowLeft || keys.a) ? 40 : 0;
+          p.y -= (keys.ArrowDown || keys.s) ? 40 : 0;
+          p.y += (keys.ArrowUp || keys.w) ? 40 : 0;
+        }
+        if (obj.effect === "explode") {
+          p.x += (Math.random() - 0.5) * 200;
+          p
 
